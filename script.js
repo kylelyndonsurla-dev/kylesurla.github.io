@@ -106,45 +106,53 @@ function stopDrag(){drag=false;stage.classList.remove('is-dragging')}
 stage.addEventListener('pointerup',stopDrag);stage.addEventListener('pointercancel',stopDrag);
 window.addEventListener('resize',()=>{if(lightbox.classList.contains('open')&&lbImg.naturalWidth){fitImage();renderImage(false)}});
 
-
-// Reliable portfolio detail modal (v10)
-const detailModalV10 = document.getElementById('detailModal');
-const detailModalTitleV10 = document.getElementById('detailModalTitle');
-const detailModalBodyV10 = document.getElementById('detailModalBody');
-let detailLastFocusV10 = null;
+// Reliable portfolio detail modal
+const detailModal = document.getElementById('detailModal');
+const detailModalTitle = document.getElementById('detailModalTitle');
+const detailModalBody = document.getElementById('detailModalBody');
+let detailLastFocus = null;
 
 function openPortfolioDetail(card){
-  if(!detailModalV10 || !card) return;
-  detailLastFocusV10 = document.activeElement;
-  detailModalTitleV10.textContent = card.dataset.title || card.querySelector('h3,h4,strong')?.textContent?.trim() || 'Details';
-  detailModalBodyV10.textContent = card.dataset.detail || 'More information about this item.';
-  detailModalV10.classList.add('is-open');
-  detailModalV10.setAttribute('aria-hidden','false');
+  if(!detailModal || !card) return;
+  detailLastFocus = document.activeElement;
+  detailModalTitle.textContent =
+    card.dataset.title ||
+    card.querySelector('h3,h4,strong')?.textContent?.trim() ||
+    'Details';
+  detailModalBody.textContent =
+    card.dataset.detail ||
+    'More information about this item.';
+  detailModal.classList.add('is-open');
+  detailModal.setAttribute('aria-hidden','false');
   document.body.classList.add('detail-modal-open');
-  detailModalV10.querySelector('.detail-modal-close')?.focus();
+  detailModal.querySelector('.detail-modal-close')?.focus();
 }
+
 function closePortfolioDetail(){
-  if(!detailModalV10) return;
-  detailModalV10.classList.remove('is-open');
-  detailModalV10.setAttribute('aria-hidden','true');
+  if(!detailModal) return;
+  detailModal.classList.remove('is-open');
+  detailModal.setAttribute('aria-hidden','true');
   document.body.classList.remove('detail-modal-open');
-  detailLastFocusV10?.focus?.();
+  detailLastFocus?.focus?.();
 }
-document.addEventListener('click', function(e){
-  const close = e.target.closest('[data-modal-close]');
-  if(close){ closePortfolioDetail(); return; }
-  const card = e.target.closest('.detail-card');
-  if(card){ openPortfolioDetail(card); }
-});
-document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape' && detailModalV10?.classList.contains('is-open')){
-    closePortfolioDetail();
-    return;
-  }
-  if((e.key === 'Enter' || e.key === ' ') && document.activeElement?.classList.contains('detail-card')){
-    e.preventDefault();
-    openPortfolioDetail(document.activeElement);
-  }
+
+document.querySelectorAll('.detail-card').forEach(card => {
+  card.addEventListener('click', () => openPortfolioDetail(card));
+  card.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      openPortfolioDetail(card);
+    }
+  });
 });
 
+detailModal?.querySelectorAll('[data-modal-close]').forEach(el => {
+  el.addEventListener('click', closePortfolioDetail);
+});
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && detailModal?.classList.contains('is-open')){
+    closePortfolioDetail();
+  }
+});
 
