@@ -197,3 +197,9 @@ header.scrolled .name-badge{min-height:32px;padding:0 12px;font-size:12px}
     min-height: 600px;
   }
 }
+/* ===== REVEAL VISIBILITY SAFETY FIX ===== */
+.reveal {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
